@@ -13,7 +13,7 @@ class ApacheaprConan(ConanFile):
 
     def source(self):
         file_ext = ".tar.gz" if not self.settings.os == "Windows" else "-win32-src.zip"
-        tools.download("https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=apr/apr-" + self.version + file_ext, self.lib_name + file_ext)
+        tools.download("http://archive.apache.org/dist/apr/apr-" + self.version + file_ext, self.lib_name + file_ext)
         tools.unzip(self.lib_name + file_ext)
 
     def build(self):
