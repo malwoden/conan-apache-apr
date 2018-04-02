@@ -1,5 +1,5 @@
 #include <iostream>
-#include <apr-1/apr_general.h>
+#include <apr_general.h>
 
 int main(int argc, char* argv[]) {
     const char* const* test = argv;
