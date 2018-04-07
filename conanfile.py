@@ -1,5 +1,4 @@
 from conans import ConanFile, AutoToolsBuildEnvironment, CMake, tools
-import os
 
 class ApacheaprConan(ConanFile):
     name = "apache-apr"
@@ -53,7 +52,7 @@ class ApacheaprConan(ConanFile):
         base_path = self.build_folder + "/buildinstall/"
 
         # libapr-1 is shared, apr-1 is static
-        if self.options.shared == True:
+        if self.options.shared:
             self.copy("*.so*", dst="lib", src=base_path + "lib", keep_path=False)
             self.copy("libapr-1.lib", dst="lib", src=base_path + "lib", keep_path=False)
             self.copy("libapr-1.dll", dst="bin", src=base_path + "bin", keep_path=False)
