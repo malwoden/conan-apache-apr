@@ -24,7 +24,7 @@ class ApacheaprConan(ConanFile):
         cmake.build(target=build_target)
         cmake.install()
 
-    def build_linux(self, install_folder):
+    def build_unix(self, install_folder):
         env_build = AutoToolsBuildEnvironment(self)
         env_build.fpic = self.options.shared
         with tools.environment_append(env_build.vars):
@@ -43,8 +43,8 @@ class ApacheaprConan(ConanFile):
     def build(self):
         install_folder = self.build_folder + "/buildinstall"
 
-        if self.settings.os == "Linux":
-            self.build_linux(install_folder)
+        if self.settings.os != "Windows":
+            self.build_unix(install_folder)
         else:
             self.build_windows(install_folder)
 
@@ -54,11 +54,13 @@ class ApacheaprConan(ConanFile):
         # libapr-1 is shared, apr-1 is static
         if self.options.shared:
             self.copy("*.so*", dst="lib", src=base_path + "lib", keep_path=False)
+            self.copy("*.dylib*", dst="lib", src=base_path + "lib", keep_path=False)
             self.copy("libapr-1.lib", dst="lib", src=base_path + "lib", keep_path=False)
             self.copy("libapr-1.dll", dst="bin", src=base_path + "bin", keep_path=False)
         else:
-            self.copy("apr-1.a", dst="lib", src=base_path + "lib", keep_path=False)
-            self.copy("apr-1.lib", dst="lib", src=base_path + "lib", keep_path=False)
+            self.copy("apr-1.a", dst="lib", src=base_path + "lib", keep_path=False) # windows
+            self.copy("apr-1.lib", dst="lib", src=base_path + "lib", keep_path=False) # windows
+            self.copy("libapr-1.a", dst="lib", src=base_path + "lib", keep_path=False) # mac
 
         # self.copy("apr-1-config", dst="bin", src="bin", keep_path=False)
         self.copy("*.h", dst="include", src=base_path + "include", keep_path=True)
@@ -76,17 +78,16 @@ class ApacheaprConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
-        if self.settings.os == "Linux":
-            # self.cpp_info.includedirs = ["include/apr-1"]
+        if self.settings.os != "Windows":
+            self.cpp_info.includedirs = ["include/apr-1"]
             self.cpp_info.libs.append("dl")
             self.cpp_info.cppflags = ["-pthread"]
 
         if self.settings.os == "Windows":
+            self.cpp_info.libs.append("Ws2_32")
+            self.cpp_info.libs.append("Rpcrt4")
+
             if not self.options.shared:
                 self.cpp_info.defines = ["APR_DECLARE_STATIC"]
             else:
                 self.cpp_info.defines = ["APR_DECLARE_EXPORT"]
-
-        self.cpp_info.libs.append("Ws2_32")
-        self.cpp_info.libs.append("Rpcrt4")
-
