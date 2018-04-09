@@ -62,7 +62,7 @@ class ApacheaprConan(ConanFile):
             self.copy("apr-1.lib", dst="lib", src=base_path + "lib", keep_path=False) # windows
             self.copy("libapr-1.a", dst="lib", src=base_path + "lib", keep_path=False) # mac
 
-        # self.copy("apr-1-config", dst="bin", src="bin", keep_path=False)
+        self.copy("apr-1-config", dst="bin", src=base_path + "bin", keep_path=False)
         self.copy("*.h", dst="include", src=base_path + "include", keep_path=True)
 
         # if self.settings.os == "Linux":
